@@ -965,8 +965,8 @@ Write or paste raw MediaWiki wikitext here..."></textarea>
      * - H1 (= Title =), H2 (== Section ==), H3, H4
      * - Right-floated {{Infobox company}} with nested templates ({{BSE}}, {{NSE}}, {{Start date and age}}, {{Increase}}, {{URL}}) & inline <ref>s
      * - Infobox-first sequential reference numbering ([1]..[15]) & two-column <references responsive="1" />
-     * - {{AfC submission}}, {{AfC comment}}, <!-- comments -->, and ---- horizontal rules
-     * - Two-way Visual <-> Wikitext synchronization with localStorage auto-save
+     * - {{AfC submission}}, {{AfC comment}}, HTML comments, and ---- horizontal rules
+     * - Two-way Visual and Wikitext synchronization with localStorage auto-save
      */
 
     const STORAGE_KEY = 'wikidraft_studio_v2_kpil_content';
@@ -1173,7 +1173,7 @@ In March 2019, KPTL acquired an 85% stake in Linjemontage i Grästorp AB, a Swed
       }
       copyTextToClipboard(sourceEditor.value, 'Copied Wikitext to clipboard!');
     }
-
+function setMode(mode) {
       if (mode === 'visual') {
         syncSourceToVisual();
         paneVisual.classList.remove('hidden');
@@ -1392,7 +1392,7 @@ In March 2019, KPTL acquired an 85% stake in Linjemontage i Grästorp AB, a Swed
 
       // 1. Extract HTML comments <!-- ... --> and preserve them invisibly
       const comments = [];
-      let processed = wikitext.replace(/<!--([\s\S]*?)-->/g, (m, inner) => {
+      let processed = wikitext.replace(/<!--([\s\S]*?)-->/g, (m) => {
         const idx = comments.length;
         comments.push(m);
         return `%%COMMENT_${idx}%%`;
@@ -1525,7 +1525,8 @@ In March 2019, KPTL acquired an 85% stake in Linjemontage i Grästorp AB, a Swed
       }
 
       closeLists();
-      return outputHtml.join('');
+      const finalHtml = outputHtml.join('');
+      return finalHtml;
     }
 
     function extractBalancedTemplates(text, templates) {
